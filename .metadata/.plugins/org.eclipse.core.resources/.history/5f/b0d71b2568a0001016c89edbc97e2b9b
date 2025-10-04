@@ -1,0 +1,12 @@
+package com.example.Backend.Repository;
+
+import org.hibernate.type.descriptor.converter.spi.JpaAttributeConverter;
+import org.springframework.stereotype.Repository;
+
+import com.example.Backend.Customer.Customer;
+
+@Repository
+public interface CustomerRepository extends JpaAttributeConverter<Customer, Integer> {
+	// You can add custom queries if needed
+	Customer findByCEmail(String email);
+}

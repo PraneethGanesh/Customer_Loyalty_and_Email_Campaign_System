@@ -1,0 +1,30 @@
+package com.example.Backend.Service;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.example.Backend.Customer.Customer;
+import com.example.Backend.Repository.CustomerRepository;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final CustomerRepository customerRepository;
+
+    public CustomUserDetailsService(CustomerRepository repo) {
+        this.customerRepository = repo;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    	Customer user = customerRepository.findByCEmail(email)
+    		    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getcEmail())
+                .password(user.getC_password())
+                .roles(user.getRole())
+                .build();
+    }
+}

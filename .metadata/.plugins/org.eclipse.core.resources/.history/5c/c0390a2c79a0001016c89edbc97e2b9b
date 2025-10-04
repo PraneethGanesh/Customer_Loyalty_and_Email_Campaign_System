@@ -1,0 +1,49 @@
+package com.example.Backend.Controller;
+
+import com.example.Backend.Customer.Customer;
+import com.example.Backend.Repository.CustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    // DTO for login request
+    public static class LoginRequest {
+        public String email;
+        public String password;
+    }
+
+    // DTO for login response
+    public static class LoginResponse {
+        public boolean success;
+        public String message;
+        // Include JWT field if you implement JWT auth
+
+        public LoginResponse(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        Customer customer = customerRepository.findByCEmail(request.email);
+        if (customer == null) {
+            return new LoginResponse(false, "Customer not found");
+        }
+        if (passwordEncoder.matches(request.password, customer.getC_password())) {
+            return new LoginResponse(true, "Login success!");
+        } else {
+            return new LoginResponse(false, "Invalid password");
+        }
+    }
+}

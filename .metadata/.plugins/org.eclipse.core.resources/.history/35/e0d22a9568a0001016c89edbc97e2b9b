@@ -1,0 +1,49 @@
+package com.example.Backend.Controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.Backend.Customer.Customer;
+import com.example.Backend.Service.CustomerService;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/customers")
+public class CustomerController {
+
+    @Autowired
+    private CustomerService service;
+
+    // Add Customer
+    @PostMapping
+    public Customer addCustomer(@RequestBody Customer customer) {
+        return service.saveCustomer(customer);
+    }
+
+    // Get All Customers
+    @GetMapping
+    public List<Customer> getCustomers() {
+        return service.getAllCustomers();
+    }
+
+    // Get Customer by ID
+    @GetMapping("/{id}")
+    public Optional<Customer> getCustomer(@PathVariable int id) {
+        return service.getCustomerById(id);
+    }
+
+    // Get Customer by Email
+    @GetMapping("/email/{email}")
+    public Customer getCustomerByEmail(@PathVariable String email) {
+        return service.getCustomerByEmail(email);
+    }
+
+    // Delete Customer
+    @DeleteMapping("/{id}")
+    public String deleteCustomer(@PathVariable int id) {
+        service.deleteCustomer(id);
+        return "Customer with ID " + id + " deleted!";
+    }
+}

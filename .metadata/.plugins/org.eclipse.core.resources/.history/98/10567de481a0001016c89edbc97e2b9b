@@ -1,0 +1,33 @@
+package com.example.Backend.Admin;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import com.example.Backend.Customer.Customer;
+import com.example.Backend.Repository.CustomerRepository;
+
+@Component
+public class DataInitializer implements CommandLineRunner {
+
+    private final CustomerRepository customerRepository;
+    private final BCryptPasswordEncoder encoder;
+
+    public DataInitializer(CustomerRepository repo, BCryptPasswordEncoder passwordEncoder) {
+        this.customerRepository = repo;
+        this.encoder = passwordEncoder;
+    }
+
+    @Override
+    public void run(String... args) {
+        if (customerRepository.findByCEmail("admin@email.com") == null) {
+            Customer admin = new Customer();
+            admin.setcEmail("admin@email.com");
+            admin.setC_password(encoder.encode("admin123"));
+            admin.setRole("ADMIN");
+            admin.setC_name("Admin");
+            // Add other required fields if any
+            customerRepository.save(admin);
+        }
+    }
+}
